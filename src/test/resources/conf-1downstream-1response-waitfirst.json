@@ -1,0 +1,13 @@
+{
+  "upstream": {
+    "host": "localhost",
+    "port": 8888
+  },
+  "downstreams" : [
+    {
+        "host": "localhost",
+        "port": 8880
+    }
+  ],
+  "eventPolicy": "WAIT_FIRST"
+}
