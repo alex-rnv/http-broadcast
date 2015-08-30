@@ -76,6 +76,12 @@ class HttpBroadcastTest extends GroovyTestCase {
         postAndExpect500(context)
     }
 
+    @Test
+    void WaitFirst_UriMappings(TestContext context) {
+        broadcast = startNewBroadcast("conf-uri-mappings.json")
+        postAndExpect200(context)
+    }
+
     private def HttpBroadcast startNewBroadcast(String json) {
         new HttpBroadcast(vertx, new ResourceConfReader(json)).startSync()
     }

@@ -1,5 +1,6 @@
 package com.alexrnv.httpbroadcast.downstream
 
+import groovy.util.logging.Log
 import io.vertx.groovy.core.http.HttpServerResponse
 
 
@@ -7,6 +8,7 @@ import io.vertx.groovy.core.http.HttpServerResponse
  * Created: 8/21/15 7:20 PM
  * Author: alex
  */
+@Log
 class EventPolicy {
 
     private static def handlersMap = [
@@ -23,6 +25,7 @@ class EventPolicy {
     private Class handler
 
     private EventPolicy(String name) {
+        log.info "EventPolicy $name"
         this.handler = handlersMap[name]
         if(this.handler == null) {
             throw new IllegalArgumentException('Wrong name $name, expected one of $handlersMap.keySet()')

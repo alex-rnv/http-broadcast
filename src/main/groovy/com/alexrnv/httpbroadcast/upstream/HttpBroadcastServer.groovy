@@ -1,19 +1,21 @@
 package com.alexrnv.httpbroadcast.upstream
 import com.alexrnv.httpbroadcast.downstream.EventHandler
 import com.alexrnv.httpbroadcast.downstream.EventPolicy
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log
+import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.groovy.core.Context
 import io.vertx.groovy.core.MultiMap
 import io.vertx.groovy.core.http.HttpClient
 import io.vertx.groovy.core.http.HttpClientRequest
 import io.vertx.groovy.core.http.HttpServer
+import io.vertx.groovy.core.http.HttpServerRequest
 import io.vertx.lang.groovy.GroovyVerticle
 /**
  * Created: 8/21/15 7:13 PM
  * Author: alex
  */
-@Slf4j
+@Log
 class HttpBroadcastServer extends GroovyVerticle {
 
     private final String[] ignoreHeaders = ["Host"]
@@ -23,10 +25,11 @@ class HttpBroadcastServer extends GroovyVerticle {
 
     @Override
     void start() throws Exception {
+
         Context context = vertx.getOrCreateContext()
         JsonObject config = context.config()
 
-        log.debug "Config: $config"
+        log.info "Staring with config: $config"
 
         JsonObject upstream = config.getJsonObject("upstream")
         List<JsonObject> downstreams = config.getJsonArray("downstreams").asList()
@@ -42,7 +45,9 @@ class HttpBroadcastServer extends GroovyVerticle {
             HttpClientRequest[] downstreamRequests = downstreams.collect { dst ->
                 int port = dst.getInteger("port")
                 String host = dst.getString("host")
-                downstreamClient.post(port, host, upstreamRequest.uri(), { resp ->
+
+                String uri = resolveUri(dst, upstreamRequest)
+                downstreamClient.post(port, host, uri, { resp ->
                     downstreamEventHandler.onDownstreamResponse(resp)
                 })
                 .setChunked(true)
@@ -51,12 +56,24 @@ class HttpBroadcastServer extends GroovyVerticle {
             copyHeaders(upstreamRequest, downstreamRequests)
             setRedirects(upstreamRequest, downstreamRequests, downstreamEventHandler)
         }
-        .listen(upstream.getInteger("port"), upstream.getString("host"))
+        .listen(upstream.getInteger("port"), upstream.getString("host"), { r ->
+            if(r.succeeded()) {
+                log.info "Started successfully"
+            } else {
+                log.error "Failed to start" , r.cause()
+            }
+        })
     }
 
     void stop() {
+        upstreamServer.close({ r ->
+            if(r.succeeded()) {
+                log.info "Upstream server stopped successfully"
+            } else {
+                log.error "Upstream server stopped with errors" , r.cause()
+            }
+        })
         downstreamClient.close()
-        upstreamServer.close()
     }
 
     private def copyHeaders(upstreamRequest, downstreamRequests) {
@@ -64,7 +81,7 @@ class HttpBroadcastServer extends GroovyVerticle {
         headers.names().each { k ->
             if(!ignoreHeaders.contains(k)) {
                 headers.getAll(k).each { v ->
-                    log.debug "Copy header $k:$v"
+                    log.info "Copy header $k:$v"
                     downstreamRequests.each { dstReq ->
                         dstReq.putHeader(k, v)
                     }
@@ -86,5 +103,24 @@ class HttpBroadcastServer extends GroovyVerticle {
                 downstreamEventHandler.onDownstreamRequest(dstReq)
             }
         }
+    }
+
+    private def resolveUri = { JsonObject dst, HttpServerRequest upstreamRequest ->
+        String pathUri = upstreamRequest.path()
+        JsonArray uriMappingsArr = dst.getJsonArray("uriMappings")
+        if(uriMappingsArr == null)
+            return pathUri
+
+        List<JsonObject> uriMappings = uriMappingsArr.asList()
+
+        String newUri = null
+        uriMappings.each { m ->
+            if(pathUri.equals(m.getString("from"))) {
+                newUri = m.getString("to")
+            }
+        }
+        newUri = newUri ?: pathUri
+        String query = upstreamRequest.query()
+        query != null ? "$newUri?$query" : "$newUri"
     }
 }

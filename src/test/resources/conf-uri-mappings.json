@@ -1,0 +1,37 @@
+{
+  "upstream": {
+    "host": "localhost",
+    "port": 8888
+  },
+  "downstreams" : [
+    {
+      "host": "localhost",
+      "port": 8880,
+      "uriMappings": [
+        {
+          "from" : "/",
+          "to": "/path"
+        }
+      ]
+    },
+    {
+      "host": "localhost",
+      "port": 8881,
+      "uriMappings": [
+        {
+          "from" : "/Path1",
+          "to": "/path1"
+        },
+        {
+          "from" : "/Path2",
+          "to": "/path2"
+        }
+      ]
+    },
+    {
+      "host": "localhost",
+      "port": 8882
+    }
+  ],
+  "eventPolicy": "WAIT_FIRST"
+}

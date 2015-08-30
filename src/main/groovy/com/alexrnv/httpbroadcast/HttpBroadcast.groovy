@@ -1,7 +1,8 @@
 package com.alexrnv.httpbroadcast
 import com.alexrnv.httpbroadcast.configuration.ConfReader
+import com.alexrnv.httpbroadcast.configuration.FileConfReader
 import com.alexrnv.httpbroadcast.upstream.HttpBroadcastServer
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
 import io.vertx.core.json.JsonObject
@@ -12,7 +13,7 @@ import java.util.concurrent.CountDownLatch
  * Created: 8/21/15 11:29 AM
  * Author: alex
  */
-@Slf4j
+@Log
 class HttpBroadcast {
 
     private Vertx vertx
@@ -87,5 +88,9 @@ class HttpBroadcast {
             latch.countDown()
     }
     private def stopHandler = { CountDownLatch latch -> stopHandler0.curry(latch) }
+
+    public static void main(String[] args) {
+        new HttpBroadcast(Vertx.vertx(), new FileConfReader(args[0])).startAsync()
+    }
 
 }
