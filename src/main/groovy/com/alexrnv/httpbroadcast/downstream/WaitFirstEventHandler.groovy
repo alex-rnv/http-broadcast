@@ -1,4 +1,6 @@
 package com.alexrnv.httpbroadcast.downstream
+
+import com.alexrnv.httpbroadcast.common.HttpCode
 import groovy.util.logging.Log
 import io.vertx.groovy.core.http.HttpClientRequest
 import io.vertx.groovy.core.http.HttpClientResponse
@@ -26,10 +28,10 @@ class WaitFirstEventHandler extends EventHandler {
     synchronized void onDownstreamResponse(HttpClientResponse r) {
         int code = r.statusCode()
         log.info "Received response, status $code"
-        if(isCodeOk(code)) {
+        if(HttpCode.isCodeOk(code)) {
             sendFirst(code)
         } else if (numResponses.incrementAndGet() >= numDownstreams) {
-            sendFirst(HTTP_CODE_ERR)
+            sendFirst(HttpCode.HTTP_CODE_ERR)
         }
     }
 }

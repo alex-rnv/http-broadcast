@@ -1,7 +1,10 @@
 package com.alexrnv.httpbroadcast.upstream
+
+import com.alexrnv.httpbroadcast.common.HttpCode
 import com.alexrnv.httpbroadcast.downstream.EventHandler
 import com.alexrnv.httpbroadcast.downstream.EventPolicy
 import groovy.util.logging.Log
+import io.vertx.core.http.HttpMethod
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.groovy.core.Context
@@ -19,6 +22,7 @@ import io.vertx.lang.groovy.GroovyVerticle
 class HttpBroadcastServer extends GroovyVerticle {
 
     private final String[] ignoreHeaders = ["Host"]
+    private final HttpMethod[] supportedMethods = [HttpMethod.POST, HttpMethod.PUT]
 
     private volatile HttpServer upstreamServer
     private volatile HttpClient downstreamClient
@@ -37,7 +41,15 @@ class HttpBroadcastServer extends GroovyVerticle {
                 .withDownstreams(downstreams.size())
 
         downstreamClient = vertx.createHttpClient()
-        upstreamServer = vertx.createHttpServer().requestHandler { upstreamRequest ->
+        upstreamServer = vertx.createHttpServer().requestHandler { HttpServerRequest upstreamRequest ->
+
+            HttpMethod method = upstreamRequest.method()
+            if(!supportedMethods.contains(method)) {
+                log.severe "Unsupported method $method, only " + Arrays.toString(supportedMethods) + " supported"
+                upstreamRequest.response().setStatusCode(HttpCode.HTTP_CODE_ERR).end()
+                return
+            }
+
             EventHandler downstreamEventHandler = policy
                     .withServerResponse(upstreamRequest.response())
                     .handler()
@@ -46,7 +58,8 @@ class HttpBroadcastServer extends GroovyVerticle {
                 int port = dst.getInteger("port")
                 String host = dst.getString("host")
                 String uri = resolveUri(dst, upstreamRequest)
-                log.info("Preparing request to $host:$port$uri")
+                log.info "Preparing request to $host:$port$uri"
+
                 downstreamClient.post(port, host, uri, { resp ->
                     downstreamEventHandler.onDownstreamResponse(resp)
                 })
@@ -60,7 +73,7 @@ class HttpBroadcastServer extends GroovyVerticle {
             if(r.succeeded()) {
                 log.info "Started successfully"
             } else {
-                log.error "Failed to start" , r.cause()
+                log.severe("Failed to start" , r.cause())
             }
         })
     }
@@ -70,7 +83,7 @@ class HttpBroadcastServer extends GroovyVerticle {
             if(r.succeeded()) {
                 log.info "Upstream server stopped successfully"
             } else {
-                log.error "Upstream server stopped with errors" , r.cause()
+                log.severe("Upstream server stopped with errors" , r.cause())
             }
         })
         downstreamClient.close()

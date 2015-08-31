@@ -8,10 +8,6 @@ import io.vertx.groovy.core.http.HttpServerResponse
  */
 abstract class EventHandler implements DownstreamEventListener {
 
-    static final int HTTP_CODE_OK = 200
-    static final int HTTP_CODE_REDIRECT = 300
-    static final int HTTP_CODE_ERR = 500
-
     protected HttpServerResponse response
     protected int numDownstreams
     protected volatile boolean first = true
@@ -19,10 +15,6 @@ abstract class EventHandler implements DownstreamEventListener {
     EventHandler(HttpServerResponse response, int numDownstreams) {
         this.response = response
         this.numDownstreams = numDownstreams
-    }
-
-    boolean isCodeOk(int code) {
-        code >= HTTP_CODE_OK && code < HTTP_CODE_REDIRECT
     }
 
     void send(int status) {

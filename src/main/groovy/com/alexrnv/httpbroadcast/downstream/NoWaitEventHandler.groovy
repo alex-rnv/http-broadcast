@@ -1,5 +1,6 @@
 package com.alexrnv.httpbroadcast.downstream
 
+import com.alexrnv.httpbroadcast.common.HttpCode
 import groovy.util.logging.Log
 import io.vertx.groovy.core.http.HttpClientRequest
 import io.vertx.groovy.core.http.HttpClientResponse
@@ -17,7 +18,7 @@ class NoWaitEventHandler extends EventHandler {
 
     @Override
     void onDownstreamRequest(HttpClientRequest request) {
-        sendFirst(HTTP_CODE_OK)
+        sendFirst(HttpCode.HTTP_CODE_OK)
     }
 
     @Override
