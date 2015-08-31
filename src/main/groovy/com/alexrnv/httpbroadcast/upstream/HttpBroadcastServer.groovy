@@ -45,8 +45,8 @@ class HttpBroadcastServer extends GroovyVerticle {
             HttpClientRequest[] downstreamRequests = downstreams.collect { dst ->
                 int port = dst.getInteger("port")
                 String host = dst.getString("host")
-
                 String uri = resolveUri(dst, upstreamRequest)
+                log.info("Preparing request to $host:$port$uri")
                 downstreamClient.post(port, host, uri, { resp ->
                     downstreamEventHandler.onDownstreamResponse(resp)
                 })
@@ -117,6 +117,7 @@ class HttpBroadcastServer extends GroovyVerticle {
         uriMappings.each { m ->
             if(pathUri.equals(m.getString("from"))) {
                 newUri = m.getString("to")
+                log.info "Redirecting uri from $pathUri to $newUri"
             }
         }
         newUri = newUri ?: pathUri

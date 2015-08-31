@@ -6,31 +6,21 @@
   "downstreams" : [
     {
       "host": "localhost",
-      "port": 8880,
+      "port": 8883,
       "uriMappings": [
         {
-          "from" : "/",
-          "to": "/path"
-        }
-      ]
-    },
-    {
-      "host": "localhost",
-      "port": 8881,
-      "uriMappings": [
-        {
-          "from" : "/Path1",
-          "to": "/path1"
+          "from": "/ok",
+          "to": "/200"
         },
         {
-          "from" : "/Path2",
-          "to": "/path2"
+          "from": "/redirect",
+          "to": "/300"
+        },
+        {
+          "from": "/error",
+          "to": "/500"
         }
       ]
-    },
-    {
-      "host": "localhost",
-      "port": 8882
     }
   ],
   "eventPolicy": "WAIT_FIRST"

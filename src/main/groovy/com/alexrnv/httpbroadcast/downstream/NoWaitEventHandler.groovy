@@ -21,8 +21,9 @@ class NoWaitEventHandler extends EventHandler {
     }
 
     @Override
-    void onDownstreamResponse(HttpClientResponse httpClientResponse) {
-        log.info "Received and ignored response: " + httpClientResponse.statusCode()
+    void onDownstreamResponse(HttpClientResponse r) {
+        def status = r.statusCode()
+        log.info "Received and ignored response, status $status"
     }
 
 }

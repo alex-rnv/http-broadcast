@@ -28,7 +28,23 @@ class HttpBroadcastTest extends GroovyTestCase {
         servers = [
                 createServer(vertx, context, 8880, { req -> req.response().setStatusCode(200).end() }),
                 createServer(vertx, context, 8881, { req -> req.response().setStatusCode(500).end() }),
-                createServer(vertx, context, 8882, { req -> })
+                createServer(vertx, context, 8882, { req -> }),
+                createServer(vertx, context, 8883, { req ->
+                    int code
+                    switch (req.uri()) {
+                        case "/300":
+                            code = 300
+                            break
+                        case "/500":
+                            code = 500
+                            break
+                        case "/200":
+                        default:
+                            code = 200
+                            break
+                    }
+                    req.response().setStatusCode(code).end()
+                })
         ]
     }
 
@@ -77,9 +93,12 @@ class HttpBroadcastTest extends GroovyTestCase {
     }
 
     @Test
-    void WaitFirst_UriMappings(TestContext context) {
+    void Check_UriMappings(TestContext context) {
         broadcast = startNewBroadcast("conf-uri-mappings.json")
-        postAndExpect200(context)
+        postAndExpectStatus(200, "/ok", context)
+        //now everything is 500 if not ok
+        postAndExpectStatus(500, "/redirect", context)
+        postAndExpectStatus(500, "/error", context)
     }
 
     private def HttpBroadcast startNewBroadcast(String json) {
@@ -95,17 +114,17 @@ class HttpBroadcastTest extends GroovyTestCase {
                 .listen(port, 'localhost', assertSuccess)
     }
 
-    private def postAndExpectStatus = { int status, TestContext context ->
+    private def postAndExpectStatus = { int status, String uri, TestContext context  ->
         Async async = context.async()
-        client.post(8888, 'localhost', '/')
+        client.post(8888, 'localhost', uri)
                 .handler({ resp ->
-                    context.assertEquals(status, resp.statusCode())
-                    async.complete()
-                })
-                .setChunked(true)
-                .end('Hi, all')
+            context.assertEquals(status, resp.statusCode())
+            async.complete()
+        })
+        .setChunked(true)
+        .end('Hi, all')
     }
 
-    private def postAndExpect200 = postAndExpectStatus.curry(200)
-    private def postAndExpect500 = postAndExpectStatus.curry(500)
+    private def postAndExpect200 = postAndExpectStatus.curry(200).curry("/")
+    private def postAndExpect500 = postAndExpectStatus.curry(500).curry("/")
 }

@@ -25,7 +25,6 @@ class EventPolicy {
     private Class handler
 
     private EventPolicy(String name) {
-        log.info "EventPolicy $name"
         this.handler = handlersMap[name]
         if(this.handler == null) {
             throw new IllegalArgumentException('Wrong name $name, expected one of $handlersMap.keySet()')
