@@ -33,7 +33,7 @@ class HttpBroadcastServer extends GroovyVerticle {
         Context context = vertx.getOrCreateContext()
         JsonObject config = context.config()
 
-        log.info "Staring with config: $config"
+        log.info "Starting with config: $config"
 
         JsonObject upstream = config.getJsonObject("upstream")
         List<JsonObject> downstreams = config.getJsonArray("downstreams").asList()
