@@ -42,7 +42,7 @@ shadowJar {
     classifier = ''
     manifest {
         attributes 'Main-Class': 'io.vertx.core.Starter'
-        attributes 'Main-Verticle': 'com.alexrnv.httpbroadcast.HttpDistribution'
+        attributes 'Main-Verticle': 'com.alexrnv.httpbroadcast.upstream.HttpDistributionServer'
     }
     mergeServiceFiles {
         include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
