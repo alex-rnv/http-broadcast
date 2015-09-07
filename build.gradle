@@ -42,7 +42,7 @@ shadowJar {
     classifier = ''
     manifest {
         attributes 'Main-Class': 'io.vertx.core.Starter'
-        attributes 'Main-Verticle': 'com.alexrnv.httpbroadcast.upstream.HttpDistributionServer'
+        attributes 'Main-Verticle': 'groovy:com.alexrnv.httpbroadcast.upstream.HttpDistributionServer'
     }
     mergeServiceFiles {
         include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
@@ -58,7 +58,7 @@ bintray {
     pkg {
         repo = 'maven'
         name = 'http-distribution-server'
-        vcsUrl = 'https://github.com/alex-rnv/http-broadcast'
+        vcsUrl = 'https://github.com/alex-rnv/http-distribution-server'
         licenses = ['Apache-2.0']
         labels = ['httpds']
         publicDownloadNumbers = true
