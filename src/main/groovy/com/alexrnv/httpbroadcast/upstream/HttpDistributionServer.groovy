@@ -19,7 +19,7 @@ import io.vertx.lang.groovy.GroovyVerticle
  * Author: alex
  */
 @Log
-class HttpBroadcastServer extends GroovyVerticle {
+class HttpDistributionServer extends GroovyVerticle {
 
     private final String[] ignoreHeaders = ["Host"]
     private final HttpMethod[] supportedMethods = [HttpMethod.POST, HttpMethod.PUT]
