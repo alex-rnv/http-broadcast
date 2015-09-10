@@ -118,4 +118,5 @@ Configuration file example
 * **eventPolicy** - defines success conditions, allowed policies are NO_WAIT (answers 200 immediately), WAIT_FIRST (send 200 when first 200 response received from downstream), WAIT_ALL (TBD). 
 
 ## TODO
-logs
+concise logs
+support GET (take from random downstream)
