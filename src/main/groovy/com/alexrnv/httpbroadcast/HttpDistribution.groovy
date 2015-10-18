@@ -1,7 +1,7 @@
 package com.alexrnv.httpbroadcast
 import com.alexrnv.httpbroadcast.configuration.ConfReader
 import com.alexrnv.httpbroadcast.configuration.FileConfReader
-import com.alexrnv.httpbroadcast.upstream.HttpBroadcastServer
+import com.alexrnv.httpbroadcast.upstream.HttpDistributionServer
 import groovy.util.logging.Log
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
@@ -15,23 +15,23 @@ import java.util.concurrent.CountDownLatch
  * Author: alex
  */
 @Log
-class HttpBroadcast {
+class HttpDistribution {
 
     private Vertx vertx
     private final ConfReader confReader
     private volatile String deploymentID
 
-    HttpBroadcast(Vertx vertx, ConfReader confReader) {
+    HttpDistribution(Vertx vertx, ConfReader confReader) {
         this.vertx = vertx
         this.confReader = confReader
     }
 
-    HttpBroadcast startAsync() {
+    HttpDistribution startAsync() {
         start0(startHandler(null))
         this
     }
 
-    HttpBroadcast startSync() {
+    HttpDistribution startSync() {
         def latch = new CountDownLatch(1)
         start0(startHandler(latch))
         latch.await()
@@ -56,7 +56,7 @@ class HttpBroadcast {
                 "instances" : 1
         ];
 
-        vertx.deployVerticle("groovy:" + HttpBroadcastServer.class.getName(), options, completionHandler)
+        vertx.deployVerticle("groovy:" + HttpDistributionServer.class.getName(), options, completionHandler)
     }
 
     private void stop0(Handler<AsyncResult<String>> completionHandler) {
@@ -91,7 +91,7 @@ class HttpBroadcast {
     private def stopHandler = { CountDownLatch latch -> stopHandler0.curry(latch) }
 
     public static void main(String[] args) {
-        new HttpBroadcast(Vertx.vertx(), new FileConfReader(args[0])).startAsync()
+        new HttpDistribution(Vertx.vertx(), new FileConfReader(args[0])).startAsync()
     }
 
 }

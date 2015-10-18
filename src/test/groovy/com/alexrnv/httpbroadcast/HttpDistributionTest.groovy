@@ -14,12 +14,12 @@ import org.junit.runner.RunWith
  * Author: alex
  */
 @RunWith(io.vertx.groovy.ext.unit.junit.VertxUnitRunner)
-class HttpBroadcastTest extends GroovyTestCase {
+class HttpDistributionTest extends GroovyTestCase {
 
     Vertx vertx
     HttpServer[] servers
     HttpClient client
-    HttpBroadcast broadcast
+    HttpDistribution broadcast
 
     @Before
      void before(TestContext context) {
@@ -58,51 +58,51 @@ class HttpBroadcastTest extends GroovyTestCase {
 
     @Test
     void NoWait_1Downstream_1Response_Expect200(TestContext context) {
-        broadcast = startNewBroadcast("conf-1downstream-1response-nowait.json")
+        broadcast = startNewDistribution("conf-1downstream-1response-nowait.json")
         postAndExpect200(context)
     }
 
     @Test
     void NoWait_3Downstreams_1Response_Expect200(TestContext context) {
-        broadcast = startNewBroadcast("conf-3downstreams-1response-nowait.json")
+        broadcast = startNewDistribution("conf-3downstreams-1response-nowait.json")
         postAndExpect200(context)
     }
 
     @Test
     void NoWait_1Downstream_FailResponse_Expect200(TestContext context) {
-        broadcast = startNewBroadcast("conf-1downstream-failresponse-nowait.json")
+        broadcast = startNewDistribution("conf-1downstream-failresponse-nowait.json")
         postAndExpect200(context)
     }
 
     @Test
     void WaitFirst_1Downstream_1Response_Expect200(TestContext context) {
-        broadcast = startNewBroadcast("conf-1downstream-1response-waitfirst.json")
+        broadcast = startNewDistribution("conf-1downstream-1response-waitfirst.json")
         postAndExpect200(context)
     }
 
     @Test
     void WaitFirst_3Downstreams_1Response_Expect200(TestContext context) {
-        broadcast = startNewBroadcast("conf-3downstreams-1response-waitfirst.json")
+        broadcast = startNewDistribution("conf-3downstreams-1response-waitfirst.json")
         postAndExpect200(context)
     }
 
     @Test
     void WaitFirst_1Downstream_FailResponse_Expect500(TestContext context) {
-        broadcast = startNewBroadcast("conf-1downstream-failresponse-waitfirst.json")
+        broadcast = startNewDistribution("conf-1downstream-failresponse-waitfirst.json")
         postAndExpect500(context)
     }
 
     @Test
     void Check_UriMappings(TestContext context) {
-        broadcast = startNewBroadcast("conf-uri-mappings.json")
+        broadcast = startNewDistribution("conf-uri-mappings.json")
         postAndExpectStatus(200, "/ok", context)
         //now everything is 500 if not ok
         postAndExpectStatus(500, "/redirect", context)
         postAndExpectStatus(500, "/error", context)
     }
 
-    private def HttpBroadcast startNewBroadcast(String json) {
-        new HttpBroadcast(vertx, new ResourceConfReader(json)).startSync()
+    private def HttpDistribution startNewDistribution(String json) {
+        new HttpDistribution(vertx, new ResourceConfReader(json)).startSync()
     }
 
     private static def assertSuccess0 = { context, ar -> context.assertTrue(ar.succeeded()) }
