@@ -3,6 +3,7 @@ package com.alexrnv.httpbroadcast.downstream
 import io.vertx.groovy.core.http.HttpServerResponse
 
 /**
+ * Abstract interface for http events (request from upstream, response from downstream) handlers.
  * Created: 8/21/15 7:21 PM
  * Author: alex
  */

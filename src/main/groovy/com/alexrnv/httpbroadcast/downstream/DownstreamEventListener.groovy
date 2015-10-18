@@ -8,6 +8,15 @@ import io.vertx.groovy.core.http.HttpClientResponse
  * Author: alex
  */
 interface DownstreamEventListener {
-    void onDownstreamRequest(HttpClientRequest request)
+    /**
+     * Fires when httpClientRequest comes to downstream handler from upstream handler.
+     * @param httpClientRequest - upstream httpClientRequest (updated version of client httpClientRequest)
+     */
+    void onDownstreamRequest(HttpClientRequest httpClientRequest)
+
+    /**
+     * Fires when response comes from downstream system.
+     * @param httpClientResponse - response from external downstream system
+     */
     void onDownstreamResponse(HttpClientResponse httpClientResponse)
 }

@@ -8,6 +8,8 @@ import io.vertx.groovy.core.http.HttpServerResponse
 
 import java.util.concurrent.atomic.AtomicInteger
 /**
+ * Sends successful response to client after receivinf at least one successful response from downstream,
+ * otherwise http code 500.
  * Created: 8/24/15 12:07 PM
  * Author: alex
  */
@@ -21,7 +23,7 @@ class WaitFirstEventHandler extends EventHandler {
     }
 
     @Override
-    void onDownstreamRequest(HttpClientRequest request) {
+    void onDownstreamRequest(HttpClientRequest httpClientRequest) {
     }
 
     @Override

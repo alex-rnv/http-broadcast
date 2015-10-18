@@ -1,8 +1,7 @@
 package com.alexrnv.httpbroadcast.common
 
 /**
- * Date: 8/31/2015
- * Time: 11:32 PM
+ * Http related constants and utilities
  * @author: Alex
  */
 class HttpCode {

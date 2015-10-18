@@ -10,6 +10,7 @@ import io.vertx.groovy.core.Vertx
 
 import java.util.concurrent.CountDownLatch
 /**
+ * Helper class for creating verticles internally (debugging and testing).
  * Created: 8/21/15 11:29 AM
  * Author: alex
  */

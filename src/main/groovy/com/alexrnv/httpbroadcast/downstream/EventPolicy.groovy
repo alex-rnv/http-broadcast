@@ -5,6 +5,7 @@ import io.vertx.groovy.core.http.HttpServerResponse
 
 
 /**
+ * Factory for {@link com.alexrnv.httpbroadcast.downstream.EventHandler}s
  * Created: 8/21/15 7:20 PM
  * Author: alex
  */

@@ -6,6 +6,7 @@ import io.vertx.groovy.core.http.HttpClientRequest
 import io.vertx.groovy.core.http.HttpClientResponse
 import io.vertx.groovy.core.http.HttpServerResponse
 /**
+ * Sends successful response to client immediately after re-translating it to downstreams, without waiting for replies.
  * Created: 8/24/15 4:40 AM
  * Author: alex
  */
@@ -17,7 +18,7 @@ class NoWaitEventHandler extends EventHandler {
     }
 
     @Override
-    void onDownstreamRequest(HttpClientRequest request) {
+    void onDownstreamRequest(HttpClientRequest httpClientRequest) {
         sendFirst(HttpCode.HTTP_CODE_OK)
     }
 

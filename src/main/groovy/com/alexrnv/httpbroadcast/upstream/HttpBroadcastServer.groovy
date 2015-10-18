@@ -15,6 +15,8 @@ import io.vertx.groovy.core.http.HttpServer
 import io.vertx.groovy.core.http.HttpServerRequest
 import io.vertx.lang.groovy.GroovyVerticle
 /**
+ * Main application verticle. Receives http PUT and POST requests and redirects them to
+ * several downstream systems, gathers replies and sends aggregated response back.
  * Created: 8/21/15 7:13 PM
  * Author: alex
  */
