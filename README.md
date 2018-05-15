@@ -1,6 +1,6 @@
 # http-distribution-server
 
-The idea is to send the same HTTP POST or PUT request to bunch of recipients, without changing request sender. Http-distribution-server retranslates request body chunks to several locations. Even though http is commonly session-based protocol, distribution-server can not support sessions in this meaning, instead it supports different response policies, depending on how many retranslations succeded.    
+Like proxy server, but vice versa. The idea is to send the same HTTP POST or PUT request to bunch of recipients, without changing request sender. Http-distribution-server retranslates request body chunks to several locations. Even though http is commonly session-based protocol, distribution-server can not support sessions in this meaning, instead it supports different response policies, depending on how many retranslations succeded.
 
 ## Usage    
 Distribution-server is a standalone microservice implemented as [Vert.x 3](http://vertx.io/) component. Generally, there is no need to include library in your dependencies, though it is possible.
@@ -118,5 +118,5 @@ Configuration file example
 * **eventPolicy** - defines success conditions, allowed policies are NO_WAIT (answers 200 immediately), WAIT_FIRST (send 200 when first 200 response received from downstream), WAIT_ALL (TBD). 
 
 ## TODO
-concise logs
+normal logs
 support GET (take from random downstream)
